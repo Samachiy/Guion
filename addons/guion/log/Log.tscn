@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/guion/log/Log.gd" type="Script" id=1]
+
+[node name="L" type="Node"]
+script = ExtResource( 1 )
+print_lop_stack = true
+push_errors_and_warnings = true

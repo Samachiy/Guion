@@ -1,0 +1,56 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://addons/guion/reader/Reader.gd" type="Script" id=1]
+[ext_resource path="res://addons/guion/reader/ParserWrapper.gd" type="Script" id=2]
+[ext_resource path="res://addons/guion/reader/Backlog.gd" type="Script" id=3]
+[ext_resource path="res://addons/guion/reader/Line.gd" type="Script" id=4]
+[ext_resource path="res://addons/guion/reader/Jumper.gd" type="Script" id=5]
+[ext_resource path="res://addons/guion/reader/FileManager.gd" type="Script" id=6]
+[ext_resource path="res://addons/guion/reader/NormalFile.gd" type="Script" id=7]
+[ext_resource path="res://addons/guion/reader/Skipper.gd" type="Script" id=8]
+[ext_resource path="res://addons/guion/reader/TempFile.gd" type="Script" id=9]
+
+[node name="Reader" type="Node"]
+script = ExtResource( 1 )
+
+[node name="Parser" type="Node" parent="."]
+script = ExtResource( 2 )
+
+[node name="Jumper" type="Node" parent="."]
+script = ExtResource( 5 )
+
+[node name="Backlog" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="Line" type="Timer" parent="."]
+script = ExtResource( 4 )
+
+[node name="Wait" type="Timer" parent="."]
+
+[node name="FileManager" type="Node" parent="."]
+script = ExtResource( 6 )
+
+[node name="NormalFile" type="Node" parent="FileManager"]
+script = ExtResource( 7 )
+
+[node name="TempFile" type="Node" parent="FileManager"]
+script = ExtResource( 9 )
+
+[node name="Skipper" type="Node" parent="FileManager"]
+script = ExtResource( 8 )
+
+[node name="AutoTimer" type="Timer" parent="."]
+
+[connection signal="indentation_change" from="Parser" to="FileManager" method="_on_Parser_indentation_change"]
+[connection signal="marker_found" from="Parser" to="FileManager" method="_on_Parser_marker_found"]
+[connection signal="parser_ready" from="Parser" to="FileManager" method="_on_Parser_parser_ready"]
+[connection signal="jumper_ready" from="Jumper" to="Backlog" method="_on_Jumper_jumper_ready"]
+[connection signal="jumper_ready" from="Jumper" to="FileManager" method="_on_Jumper_jumper_ready"]
+[connection signal="backlog_jump_performed" from="Backlog" to="." method="_on_Backlog_backlog_jump_performed"]
+[connection signal="entered_backlog" from="Backlog" to="FileManager" method="_on_Backlog_entered_backlog"]
+[connection signal="exited_backlog" from="Backlog" to="FileManager" method="_on_Backlog_exited_backlog"]
+[connection signal="finished" from="Line" to="." method="_on_Line_finished"]
+[connection signal="read_next_char" from="Line" to="." method="_on_Line_read_next_char"]
+[connection signal="timeout" from="Line" to="Line" method="_on_Line_timeout"]
+[connection signal="timeout" from="Wait" to="." method="_on_Wait_timeout"]
+[connection signal="spotlight_loaded" from="FileManager" to="." method="_on_FileManager_spotlight_loaded"]
