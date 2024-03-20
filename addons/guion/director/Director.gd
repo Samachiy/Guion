@@ -26,6 +26,10 @@ func get_current_version_array() -> Array:
 	return [major_version, minor_version, patch_version]
 
 
+func get_current_version_string() -> String:
+	return str(major_version) + "." + str(minor_version) + "." + str(patch_version)
+
+
 func _ready():
 	parser = parser.parser
 	processor.reader = reader
@@ -448,5 +452,3 @@ func set_text_scripts_locale(locale: String):
 	if not dir.dir_exists(text_dir):
 		text_dir = normal_file.text_directory + default_locale + "/"
 	normal_file.text_folder = text_dir
-
-

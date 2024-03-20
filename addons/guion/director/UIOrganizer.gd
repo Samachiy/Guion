@@ -22,7 +22,6 @@ tween: SceneTreeTween = null, delay: float = 0, chain: bool = false) -> float:
 	var time_to_complete = 0
 	if tween == null: 
 		tween = create_tween()
-		#tween.set_trans(Tween.TRANS_LINEAR)
 	
 	var prev_v_tween: VisibilityTWeen = active_tweens.get(control_node)
 	
@@ -131,6 +130,7 @@ time: float = 0, tween = null):
 	var tween2: SceneTreeTween
 	if not tween is SceneTreeTween:
 		tween = get_tree().create_tween()
+		tween.set_trans(Tween.TRANS_LINEAR)
 	
 	var aux
 	tween.set_parallel(true).pause()
@@ -169,6 +169,7 @@ type_colors: Dictionary, time: float = 0, tween = null):
 	var play: bool = false
 	if not tween is SceneTreeTween:
 		tween = get_tree().create_tween()
+		tween.set_trans(Tween.TRANS_LINEAR)
 	
 	tween.set_parallel(true).pause()
 	
@@ -193,6 +194,7 @@ func change_style_colors_by_alpha(style: StyleBox, style_colors: Dictionary,
 time: float = 0, tween = null) -> bool:
 	if tween == null: 
 		tween = create_tween()
+		tween.set_trans(Tween.TRANS_LINEAR)
 	
 	var added_tweener: bool = false
 	var aux
@@ -593,14 +595,14 @@ class VisibilityTWeen extends Reference:
 		is_finished = false
 		if visible:
 			type = types.SHOW
-			if time != 0:
-				tween.tween_property(node, "modulate:a", 1, time).set_delay(delay)
-				tween.pause()
+#			if time != 0:
+			tween.tween_property(node, "modulate:a", 1, time).set_delay(delay)
+			tween.pause()
 		else:
 			type = types.HIDE
-			if time != 0:
-				tween.tween_property(node, "modulate:a", 0, time).set_delay(delay)
-				tween.pause()
+#			if time != 0:
+			tween.tween_property(node, "modulate:a", 0, time).set_delay(delay)
+			tween.pause()
 	
 	
 	func _tween_is_finished():
@@ -632,8 +634,8 @@ class VisibilityTWeen extends Reference:
 				node.modulate.a = 0
 			node.visible = true
 		
-		if original_time != 0:
-			tween.play()
+#		if original_time != 0:
+		tween.play()
 	
 	
 	func chain(control_node: Control, time: float, visible: bool, tween_: SceneTreeTween):
@@ -660,6 +662,9 @@ class VisibilityTWeen extends Reference:
 		
 	
 	func get_proportinal_remaining_time(time: float, is_inverse_transition: bool):
+		if original_time == 0:
+			return 0
+		
 		var remaing_time_proportion = get_remaining_time() / original_time
 		if is_inverse_transition:
 			return time * (1 - remaing_time_proportion)

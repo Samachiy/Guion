@@ -36,24 +36,51 @@ func reset_by_flags(tutorial_flags: Array):
 	Flags.remove(Cue.new('', '').args(tutorial_flags))
 
 
+func cancel(id: String):
+	var sub = subscriptions.get(id, null)
+	if sub is TutorialSubscription:
+		sub.cancel()
+
+
+func cancel_all():
+	for sub in subscriptions:
+		if sub is TutorialSubscription:
+			sub.cancel()
 
 
 
-class TutorialSubscription:
+
+class TutorialSubscription extends Reference:
 	
 	signal prepare_requested(tutorial_sequence)
 	
 	var id
 	var sequence: TutorialSequence = null
+	var started: bool = false
+	var completed: bool = false
 	
 	func _init(subscription_id: String):
 		id = subscription_id
 	
 	func prepare(tutorial_sequence: TutorialSequence):
 		sequence = tutorial_sequence
+		sequence.connect("sequence_completed", self, "_on_sequence_completed")
 		emit_signal("prepare_requested", tutorial_sequence)
 	
 	
 	func start():
-		if sequence != null:
+		if is_instance_valid(sequence):
 			sequence.start()
+			started = true
+		else:
+			l.g("Can't start tutorial sequence of id: " + id)
+	
+	
+	func cancel():
+		if is_instance_valid(sequence):
+			sequence.cancel()
+			started = false
+	
+	
+	func _on_sequence_completed(_name):
+		completed = true

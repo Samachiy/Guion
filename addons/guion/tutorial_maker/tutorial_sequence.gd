@@ -11,6 +11,9 @@ var display: TutorialDisplay = null
 var set_text_function: String
 var name: String = ''
 
+signal sequence_terminated(name)
+signal sequence_completed(name)
+
 func _init(step_names: Array, sequence_name: String):
 	name = sequence_name
 	for step_name in step_names:
@@ -104,10 +107,23 @@ func run_current_step() -> bool:
 		return false
 
 
+func cancel():
+	# Aborts the sequence, returning to before sequnce starts, hides/frees what needs to be done so
+	_terminate_sequence()
+
+
 func complete_sequence():
+	# Marks sequence as finished and hides/frees what needs to be done so
 	Flag.new(name).set_up(true)
+	emit_signal("sequence_completed", name)
+	_terminate_sequence()
+
+
+func _terminate_sequence():
+	# Hides/frees all the visual stuff done through the sequence
 	display.visible = false
 	stop_current_step()
+	emit_signal("sequence_terminated", name)
 	call_deferred("free")
 
 

@@ -3,7 +3,7 @@ extends Reference
 class_name TutorialStep
 const BLINK_SHOW_TIME = 1
 const BLINK_HIDE_TIME = 1
-const BLINK_STAY_TIME = 0.5
+const BLINK_STAY_TIME = 0.3
 
 var text = ''
 var nodes = []
@@ -78,6 +78,7 @@ has_next: bool, allow_skip: bool = true):
 	_execute_cues(run_cues)
 	tutorial_display.clear()
 	frame_blink_tween = tutorial_display.create_tween().set_loops().bind_node(tutorial_display)
+	frame_blink_tween.set_trans(Tween.TRANS_LINEAR)
 	frame_blink_tween.pause()
 	var has_frames = false
 	for control_node in nodes:
@@ -130,10 +131,16 @@ func add_frame(control_node: Control, tutorial_display: TutorialDisplay):
 	if frame is ReferenceRect:
 		node_frame_pairs[control_node] = frame
 	
+	var ini_color = Color(1.0, 1.0, 1.0, 1.0)
+	var end_color = Color(0.0, 0.0, 0.0, 0.5)
 	if frame_blink_tween != null:
-		frame_blink_tween.parallel().tween_property(frame, "modulate:a", 0.4, BLINK_HIDE_TIME)
-		frame_blink_tween.tween_property(frame, "modulate:a", 1, BLINK_SHOW_TIME)
-		frame_blink_tween.tween_property(frame, "modulate:a", 1, BLINK_STAY_TIME)
+		frame_blink_tween.set_parallel(true)
+		frame_blink_tween.tween_property(frame, "modulate", end_color, BLINK_HIDE_TIME
+				).from(ini_color)
+		frame_blink_tween.tween_property(frame, "modulate", ini_color, BLINK_SHOW_TIME
+				).set_delay(BLINK_HIDE_TIME).from(end_color)
+		frame_blink_tween.tween_property(frame, "modulate:a", 1, BLINK_STAY_TIME
+				).set_delay(BLINK_HIDE_TIME + BLINK_SHOW_TIME).from(1)
 
 
 func add_indicator(control_node: Control, tutorial_display: TutorialDisplay):
