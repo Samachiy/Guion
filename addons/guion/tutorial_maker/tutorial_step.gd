@@ -139,8 +139,8 @@ func add_frame(control_node: Control, tutorial_display: TutorialDisplay):
 				).from(ini_color)
 		frame_blink_tween.tween_property(frame, "modulate", ini_color, BLINK_SHOW_TIME
 				).set_delay(BLINK_HIDE_TIME).from(end_color)
-		frame_blink_tween.tween_property(frame, "modulate:a", 1, BLINK_STAY_TIME
-				).set_delay(BLINK_HIDE_TIME + BLINK_SHOW_TIME).from(1)
+		frame_blink_tween.tween_property(frame, "modulate:a", 1.0, BLINK_STAY_TIME
+				).set_delay(BLINK_HIDE_TIME + BLINK_SHOW_TIME).from(1.0)
 
 
 func add_indicator(control_node: Control, tutorial_display: TutorialDisplay):

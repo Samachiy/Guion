@@ -20,6 +20,7 @@ export var default_locale: String = 'en_US'
 export var major_version: int = 0
 export var minor_version: int = 0
 export var patch_version: int = 0
+export var release_candidate: int = 0 # 0 means it is not release candidate
 
 
 func get_current_version_array() -> Array:
@@ -33,7 +34,6 @@ func get_current_version_string() -> String:
 func _ready():
 	parser = parser.parser
 	processor.reader = reader
-	request_role_on_roles_cleared(self, "_request_roles")
 
 
 # SIGNALS RELAY (necessary to adapt this to godot 4, willbe done on demand)
@@ -80,6 +80,9 @@ func connect_global_save_cues_requested(node, method_name: String):
 func connect_game_closing(node, method_name: String):
 	saveload.connect("game_closing", node, method_name)
 
+func connect_game_viewport_changed(node, method_name: String):
+	saveload.connect("game_viewport_changed", node, method_name)
+
 func connect_scene_change_started(node, method_name: String):
 	stage.connect("scene_change_started", node, method_name)
 
@@ -91,9 +94,6 @@ func connect_stage_hidden(node, method_name: String):
 
 func connect_stage_shown(node, method_name: String):
 	stage.connect("stage_shown", node, method_name)
-
-func connect_game_viewport_changed(node, method_name: String):
-	saveload.connect("game_viewport_changed", node, method_name)
 
 # Re-add this signals on demand
 
@@ -195,6 +195,8 @@ func restore_auto_save(_cue: Cue = null):
 	return saveload.restore_auto_save(_cue)
 func auto_save_exists():
 	return saveload.auto_save_exists()
+func reload_current_scene(reload_global_file: bool):
+	return saveload.reload_current_scene(reload_global_file)
 
 
 func hide_stage(cue: Cue):

@@ -191,7 +191,7 @@ func _on_Blackout_blackout_started():
 		return
 	
 	var tree = get_tree()
-	if tree.change_scene_to_file(next_scene_path) == OK:
+	if tree.change_scene(next_scene_path) == OK:
 #		yield(tree, "idle_frame")
 #		var scene_ = tree.current_scene
 #		var err = tree.current_scene.connect("ready", self, "_on_change_scene_ready")

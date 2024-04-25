@@ -20,11 +20,13 @@ var director = Director
 var roles = Roles
 
 var version: Array = [-1, -1, -1] # major, mino, patch respectivelly -1 means current ver
+var release_candidate: bool = false
 
 func _init(role_name: String, method_name: String) -> void:
 	role = role_name
 	method = method_name
 	version = director.get_current_version_array()
+	release_candidate = director.release_candidate
 
 
 func opts(options_dict: Dictionary) -> Cue:
@@ -551,6 +553,10 @@ func _compare_version_to(major_ver: int, minor_ver: int, patch_ver: int) -> int:
 
 func get_version_array() ->Array:
 	return [get_major_version(), get_minor_version(), get_patch_version()]
+
+
+func is_release_candidate(rc: bool):
+	return rc == release_candidate
 
 
 func get_major_version() -> int:

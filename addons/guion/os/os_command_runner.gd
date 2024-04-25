@@ -1,8 +1,8 @@
 extends Panel
 
 
-onready var line = $MarginContainer/LineEdit
-onready var blocking = $MarginContainer/CheckBox
+onready var line = $MarginContainer/HBoxContainer/LineEdit
+onready var blocking = $MarginContainer/HBoxContainer/CheckBox
 
 
 func _on_Button_pressed():

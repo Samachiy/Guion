@@ -331,10 +331,10 @@ func load_global_file():
 		l.g("Global file loaded. ", l.INFO)
 		if not Flags.flag_catalog.empty():
 			l.g(str(Flags.flag_catalog.size()) + " flags overwriten when loading global file.", 
-					l.WARNING)
+					l.DEBUG)
 		if not skipped_lines.empty():
 			l.g(str(skipped_lines.size()) + " skip entries overwriten when loading global file.", 
-					l.WARNING)
+					l.DEBUG)
 		
 		# Info extraction
 		Flags.global_flags = data.get('flags', {})
@@ -527,3 +527,9 @@ func _notification(what):
 #				delete_save_file(AUTO_SAVE_SLOT)
 
 
+func reload_current_scene(reload_global_file: bool):
+	Roles.clear_roles()
+	get_tree().reload_current_scene()
+	yield(self, "load_ready")
+	if reload_global_file:
+		load_global_file()
