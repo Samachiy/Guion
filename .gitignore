@@ -8,3 +8,4 @@ project.godot
 default_env.tres
 icon.png
 .godot/
+addons/godot-git-plugin
