@@ -4,5 +4,4 @@
 
 [node name="L" type="Node"]
 script = ExtResource( 1 )
-print_lop_stack = true
 push_errors_and_warnings = true

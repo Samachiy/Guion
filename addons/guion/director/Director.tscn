@@ -17,6 +17,7 @@ resource_name = "startBlackout"
 
 [node name="Director" type="Node"]
 script = ExtResource( 1 )
+release_candidate = 1
 
 [node name="SaveLoad" type="Node" parent="."]
 script = ExtResource( 2 )
@@ -53,5 +54,4 @@ script = ExtResource( 4 )
 
 [connection signal="game_viewport_changed" from="SaveLoad" to="ConsoleServer" method="_on_SaveLoad_game_viewport_changed"]
 [connection signal="load_ready" from="SaveLoad" to="SaveLoad/Stage" method="_on_SaveLoad_load_ready"]
-[connection signal="tree_exiting" from="SaveLoad" to="SaveLoad" method="_on_SaveLoad_tree_exiting"]
 [connection signal="scene_change_started" from="SaveLoad/Stage" to="SaveLoad" method="_on_Stage_scene_change_started"]

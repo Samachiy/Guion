@@ -115,8 +115,6 @@ func create_file(file_path: String, globalize_path: bool = true):
 		file_path = ProjectSettings.globalize_path(file_path)
 	
 	var file_dir = file_path.get_base_dir()
-#	if !DirAccess.dir_exists_absolute(file_dir):
-#		DirAccess.make_dir_recursive_absolute(file_dir)
 	
 	var dir = Directory.new()
 	if !dir.dir_exists(file_dir):
@@ -321,6 +319,9 @@ func load_global_file():
 	var save_path = _get_global_save_path()
 	var load_file = open_file(save_path)
 	#var error = load_file.open_encrypted_with_pass(save_path, File.READ, password)
+	if load_file == null:
+		return
+	
 	var cues = []
 	if load_file != null:
 		var data = load_file.get_var()
@@ -330,10 +331,10 @@ func load_global_file():
 		l.g("Global file loaded. ", l.INFO)
 		if not Flags.flag_catalog.empty():
 			l.g(str(Flags.flag_catalog.size()) + " flags overwriten when loading global file.", 
-					l.WARNING)
+					l.DEBUG)
 		if not skipped_lines.empty():
 			l.g(str(skipped_lines.size()) + " skip entries overwriten when loading global file.", 
-					l.WARNING)
+					l.DEBUG)
 		
 		# Info extraction
 		Flags.global_flags = data.get('flags', {})
@@ -516,11 +517,19 @@ func _on_AutoSaveTimer_timeout():
 	auto_save_ready = true
 
 
-func _on_SaveLoad_tree_exiting():
-	save_global_file()
-	emit_signal("game_closing")
-	l.g('Graceful game close achieved', l.INFO)
-	if save_file_exists(AUTO_SAVE_SLOT):
-		delete_save_file(AUTO_SAVE_SLOT)
+func _notification(what):
+	match what:
+		NOTIFICATION_WM_QUIT_REQUEST:
+			save_global_file()
+			emit_signal("game_closing")
+			l.g('Graceful game close achieved', l.INFO)
+#			if save_file_exists(AUTO_SAVE_SLOT):
+#				delete_save_file(AUTO_SAVE_SLOT)
 
 
+func reload_current_scene(reload_global_file: bool):
+	Roles.clear_roles()
+	get_tree().reload_current_scene()
+	yield(self, "load_ready")
+	if reload_global_file:
+		load_global_file()

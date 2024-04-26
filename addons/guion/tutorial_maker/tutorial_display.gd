@@ -123,7 +123,7 @@ func update_display_box_rect():
 	# Click actions will be counted as a frame
 	# In drag actions we will just drag over the tutorial box, but the source and target will 
 	# count as frames
-	if current_dialog == null:
+	if not is_instance_valid(current_dialog):
 		return
 	
 	var child_nodes = []
@@ -144,9 +144,15 @@ func update_display_box_rect():
 		rect = get_rect()
 	
 	yield(get_tree(), "idle_frame")
+	if not is_instance_valid(current_dialog):
+		return
+	
 	var margin_offset = (rect.size - current_dialog.rect_size ) / 2
 	current_dialog.rect_position = rect.position + margin_offset
 	yield(get_tree(), "idle_frame")
+	if not is_instance_valid(current_dialog):
+		return
+	
 	current_dialog.visible = true
 
 
@@ -226,8 +232,6 @@ horizontal: bool):
 	var corner = subs_rect2.position + subs_rect2.size
 	var origin = side.get_center()
 	var cut_point = _get_cut_point(origin, subs_rect2.position, corner)
-#	place_sprite_at(cut_point)
-#	l.p('cut point ' + str(cut_point))
 	var resul
 	if side_rect.intersects(subs_rect2):
 		if horizontal:
@@ -308,17 +312,13 @@ func _on_disable_mouse_stop():
 func place_sprite_at(pos: Vector2):
 	# This function was made for debugging purposes only, it has nothing to do with 
 	# the actual inner workings of this module
+	# Since this uses load, it will only work on the IDE, noe as a standalone
+	if OS.has_feature("standalone"):
+		return
+	
 	var texture_rect = TextureRect.new()
 	add_child(texture_rect)
 	texture_rect.texture = load("res://icon.png")
 	texture_rect.rect_position = pos
 
-#
-#class TutorialSequence:
-#	var control_instruction_pairs: Array
-#	var flag: String
-#	var current_step: int = 0
-#
-#	func add_step(control_node: Control, instruction: String):
-#		control_instruction_pairs.append([control_node, instruction])
 
