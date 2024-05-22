@@ -205,10 +205,25 @@ func save_file_at_slot(slot_num = '_q'):
 	wipe_label(FILE_SAVE_LABEL)
 
 
+func save_file_at_path(path):
+	# At the moment, this won't emit any signals
+	# Since this is intended for normal files or normal programs
+	default_label = FILE_SAVE_LABEL # this means to lockers labels
+	fill_lockers(true)
+	default_label = SCENE_SAVE_LABEL
+	_save_data_at(path)
+	wipe_label(FILE_SAVE_LABEL)
+
+
 func _save_data(slot_num = '_q'):
 	emit_signal("file_save_requested", slot_num)
 	save_global_file()
 	var save_path = _get_save_path(slot_num)
+	if _save_data_at(save_path):
+		emit_signal("file_saved", slot_num)
+
+
+func _save_data_at(path) -> bool:
 	var data
 	
 	data = {
@@ -221,11 +236,13 @@ func _save_data(slot_num = '_q'):
 	}
 	
 	#var error = save_file.open_encrypted_with_pass(save_path, File.WRITE, password)
-	var save_file = create_file(save_path)
+	var save_file = create_file(path)
 	if save_file != null:
 		save_file.store_var(data)
 		save_file.close()
-		emit_signal("file_saved", slot_num)
+		return true
+	else:
+		return false
 
 
 func _save_cues():
@@ -284,27 +301,48 @@ func load_file_at_slot(slot_num = '_q'):
 	_load_data(slot_num)
 
 
+func load_file_at_path(path):
+	var save_file = File.new()
+	if not save_file.file_exists(path):
+		return
+	
+	# At the moment, this won't emit any signals
+	# Since this is intended for normal files or normal programs
+	var data = _load_data_at(path)
+	if data != null:
+		lockers = data['lockers']
+		Flags.flag_catalog = data['flags']
+		use_up_locker(FILE_SAVE_LABEL)
+
+
 func _load_data(slot_num = '_q'):
 	var save_path = _get_save_path(slot_num)
-	var load_file = open_file(save_path)
-	#var error = load_file.open_encrypted_with_pass(save_path, File.READ, password)
-	if load_file != null:
-		var data = load_file.get_var()
+	var data = _load_data_at(save_path)
+	if data != null:
 		var text
-		load_file.close()
-		
 		lockers = data['lockers']
 		Flags.flag_catalog = data['flags']
 		reader.global_abr_array = data['global_abr_array']
 		backlog.array = data['backlog']
 		text = data['text']
-		Roles.clear_roles()
 		reader.current_text = text
 		line.text = text
+		Roles.clear_roles()
 		backlog.reset_backlog_cursor()
 		backlog.refresh_is_backlog_var()
 		stage.change_scene_to_file(Cue.new('', '').args([data['scene'], true]))
 		emit_signal("file_loaded", slot_num)
+
+
+func _load_data_at(path):
+	var load_file = open_file(path)
+	#var error = load_file.open_encrypted_with_pass(save_path, File.READ, password)
+	if load_file != null:
+		var data = load_file.get_var()
+		load_file.close()
+		return data
+	else:
+		return null
 
 
 func _load_cues():

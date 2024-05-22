@@ -165,6 +165,10 @@ func save_file_at_slot(slot_num = '_q'):
 	saveload.save_file_at_slot(slot_num)
 func load_file_at_slot(slot_num = '_q'):
 	saveload.load_file_at_slot(slot_num)
+func save_file_at_path(path):
+	saveload.save_file_at_path(path)
+func load_file_at_path(path):
+	saveload.load_file_at_path(path)
 func _pop_mail_cue(cue: Cue):
 	saveload.pop_mail_cue(cue)
 func _push_mail_cue(cue: Cue):
