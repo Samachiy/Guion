@@ -17,7 +17,8 @@ resource_name = "startBlackout"
 
 [node name="Director" type="Node"]
 script = ExtResource( 1 )
-release_candidate = 1
+minor_version = 1
+patch_version = 2
 
 [node name="SaveLoad" type="Node" parent="."]
 script = ExtResource( 2 )

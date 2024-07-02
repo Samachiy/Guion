@@ -77,6 +77,9 @@ func connect_save_cues_requested(node, method_name: String):
 func connect_global_save_cues_requested(node, method_name: String):
 	saveload.connect("global_save_cues_requested", node, method_name)
 
+func connect_game_pre_closing(node, method_name: String):
+	saveload.connect("game_pre_closing", node, method_name)
+
 func connect_game_closing(node, method_name: String):
 	saveload.connect("game_closing", node, method_name)
 
@@ -165,6 +168,10 @@ func save_file_at_slot(slot_num = '_q'):
 	saveload.save_file_at_slot(slot_num)
 func load_file_at_slot(slot_num = '_q'):
 	saveload.load_file_at_slot(slot_num)
+func save_file_at_path(path):
+	saveload.save_file_at_path(path)
+func load_file_at_path(path):
+	saveload.load_file_at_path(path)
 func _pop_mail_cue(cue: Cue):
 	saveload.pop_mail_cue(cue)
 func _push_mail_cue(cue: Cue):
