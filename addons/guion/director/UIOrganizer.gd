@@ -127,13 +127,15 @@ time: float = 0, tween = null):
 #	if color_modulate_tween != null and color_modulate_tween.is_running() and time != 0:
 #		color_modulate_tween.kill()
 	var play: bool = false
-	var tween2: SceneTreeTween
-	if not tween is SceneTreeTween:
-		tween = get_tree().create_tween()
-		tween.set_trans(Tween.TRANS_LINEAR)
+	
+	if time != 0:
+		if not tween is SceneTreeTween:
+			tween = get_tree().create_tween()
+			tween.set_trans(Tween.TRANS_LINEAR)
+		
+		tween.set_parallel(true).pause()
 	
 	var aux
-	tween.set_parallel(true).pause()
 	for node in get_tree().get_nodes_in_group(group):
 		if node is CanvasItem:
 			aux = _set_modulate_color(node, colors, time, tween)
@@ -167,18 +169,23 @@ type_colors: Dictionary, time: float = 0, tween = null):
 #		color_theme_tween.kill()
 	
 	var play: bool = false
-	if not tween is SceneTreeTween:
-		tween = get_tree().create_tween()
-		tween.set_trans(Tween.TRANS_LINEAR)
-	
-	tween.set_parallel(true).pause()
+	if time != 0:
+		if not tween is SceneTreeTween:
+			tween = get_tree().create_tween()
+			tween.set_trans(Tween.TRANS_LINEAR)
+		
+		tween.set_parallel(true).pause()
 	
 	var stylebox
 	var aux
+	var done_styleboxes: Dictionary = {}
 	for type_name in theme.get_type_list(""):
 		for style_name in theme.get_stylebox_list(type_name):
 			stylebox = theme.get_stylebox(style_name, type_name)
+			if stylebox in done_styleboxes:
+				continue
 			aux = change_style_colors_by_alpha(stylebox, style_colors, time, tween)
+			done_styleboxes[stylebox] = true
 			play = play or aux
 		
 		for color_name in theme.get_color_list(type_name):
@@ -192,9 +199,10 @@ type_colors: Dictionary, time: float = 0, tween = null):
 
 func change_style_colors_by_alpha(style: StyleBox, style_colors: Dictionary, 
 time: float = 0, tween = null) -> bool:
-	if tween == null: 
-		tween = create_tween()
-		tween.set_trans(Tween.TRANS_LINEAR)
+	if time != 0:
+		if tween == null: 
+			tween = create_tween()
+			tween.set_trans(Tween.TRANS_LINEAR)
 	
 	var added_tweener: bool = false
 	var aux
@@ -237,6 +245,7 @@ type_name: String, color_dict, time: float, tween: SceneTreeTween) -> bool:
 		return added_tweener
 	
 	if time == 0:
+		#l.p(color_name + " " + str(original_color.a8) + " " + str(target_color.a8))
 		theme.set_color(color_name, type_name, target_color)
 	elif original_color != target_color:
 #		var callable = Callable(self, "_set_theme_color").bind(theme, color_name, type_name)

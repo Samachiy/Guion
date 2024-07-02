@@ -5,7 +5,7 @@ class_name FlagModule
 const FLAG_TEMPLATE: Array = [0.0] 
 const NOT_SIGN = '~'
 
-var flag_catalog: Dictionary = {} setget set_local_flags, get_local_flags
+var flag_catalog: Dictionary = {} setget set_all_flags, get_all_flags
 var global_flags: Dictionary = {} setget set_global_flags, get_global_flags
 var wrappers: Dictionary = {}
 
@@ -126,7 +126,7 @@ func set_global_flags(value: Dictionary):
 	refresh_local_flags_value_with_global()
 
 
-func set_local_flags(value: Dictionary):
+func set_all_flags(value: Dictionary):
 	flag_catalog = value
 	refresh_local_flags_value_with_global()
 
@@ -135,7 +135,7 @@ func get_global_flags():
 	return global_flags
 
 
-func get_local_flags():
+func get_all_flags():
 	refresh_local_flags_value_with_global()
 	return flag_catalog
 

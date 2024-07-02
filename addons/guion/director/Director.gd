@@ -77,6 +77,9 @@ func connect_save_cues_requested(node, method_name: String):
 func connect_global_save_cues_requested(node, method_name: String):
 	saveload.connect("global_save_cues_requested", node, method_name)
 
+func connect_game_pre_closing(node, method_name: String):
+	saveload.connect("game_pre_closing", node, method_name)
+
 func connect_game_closing(node, method_name: String):
 	saveload.connect("game_closing", node, method_name)
 

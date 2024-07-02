@@ -247,9 +247,12 @@ func disassemble() -> Array:
 	return resul
 
 
-func assemble(disassembled_cue: Array) -> Cue:
+func assemble(disassembled_cue: Array, print_error: bool = true) -> Cue:
 	if disassembled_cue.empty():
-		l.g("disassembled cue is emtpy at:" + str(get_stack()))
+		if print_error:
+			l.g("disassembled cue is emtpy at:" + str(get_stack()))
+		return null
+	
 	var cue = get_script().new(
 		disassembled_cue.pop_back(), # role
 		disassembled_cue.pop_back()) # method
@@ -350,10 +353,14 @@ func execute(log_missing_role: bool = true):
 		if log_missing_role:
 			l.g("The role for cue '" + str(self) + "' doesn't exist.")
 		resul = null
+	elif node is String and director.get_tree().has_group(node):
+		resul = execute_in_group(node)
+	elif not is_instance_valid(node):
+		if log_missing_role:
+			l.g("The role for cue '" + str(self) + "' was already freed.")
+		resul = null
 	elif node is Node:
 		resul = execute_in_node(node)
-	elif director.get_tree().has_group(node):
-		resul = execute_in_group(node)
 	
 	return resul
 

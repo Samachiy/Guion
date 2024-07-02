@@ -53,6 +53,7 @@ signal global_save_cues_requested
 signal auto_saved_file_found(slot)
 signal global_file_loaded
 signal game_closing
+signal game_pre_closing
 
 func _ready():
 	camera.save_dir = SAVE_DIR
@@ -208,6 +209,7 @@ func save_file_at_slot(slot_num = '_q'):
 func save_file_at_path(path):
 	# At the moment, this won't emit any signals
 	# Since this is intended for normal files or normal programs
+	emit_signal("file_save_requested", path)
 	default_label = FILE_SAVE_LABEL # this means to lockers labels
 	fill_lockers(true)
 	default_label = SCENE_SAVE_LABEL
@@ -306,13 +308,13 @@ func load_file_at_path(path):
 	if not save_file.file_exists(path):
 		return
 	
+	emit_signal("file_load_requested", path)
 	# At the moment, this won't emit any signals
 	# Since this is intended for normal files or normal programs
 	var data = _load_data_at(path)
 	if data != null:
 		lockers = data['lockers']
 		Flags.flag_catalog = data['flags']
-		use_up_locker(FILE_SAVE_LABEL)
 
 
 func _load_data(slot_num = '_q'):
@@ -558,6 +560,7 @@ func _on_AutoSaveTimer_timeout():
 func _notification(what):
 	match what:
 		NOTIFICATION_WM_QUIT_REQUEST:
+			emit_signal("game_pre_closing")
 			save_global_file()
 			emit_signal("game_closing")
 			l.g('Graceful game close achieved', l.INFO)
